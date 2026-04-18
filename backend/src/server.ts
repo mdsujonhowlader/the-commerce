@@ -20,20 +20,19 @@ async function mainEntryFunction() {
   app.use(
     cors({
       origin: corsOrigin,
-      credentials: true,
+      credentials: true
     }),
   );
+  app.use(express.json());
   app.use(morgan("dev"));
-
-  app.use((clerkMiddleware))
 
   app.get("/health", (_req, res) => {
     res
       .status(200)
       .json(successResponse({ message: "Server is healthy/ in running" }));
   });
-
-  app.use("/auth",authRouter)
+  app.use(clerkMiddleware());
+  app.use("/auth", authRouter);
   app.use(notFound);
   app.use(errorHandler);
 

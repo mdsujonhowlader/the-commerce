@@ -5,6 +5,7 @@ import { AppError } from "../utils/AppError.js";
 import { User } from "../models/User.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 export function requireAuth(req: Request, _res: Response, next: NextFunction) {
+  
   const { userId } = getAuth(req);
 
   if (!userId) {

@@ -23,7 +23,7 @@ api.interceptors.request.use(async (config) => {
   const token = await tokenGetter();
 
   if (token) {
-    //config.headers = config.headers || {};
+    config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -59,8 +59,8 @@ export async function apiGet<T>(url: string, config?: AxiosRequestConfig) {
 
 export async function apiPost<TResponse, TBody = unknown>(
   url: string,
-  body: TBody,
-  config: AxiosRequestConfig,
+  body?: TBody,
+  config?: AxiosRequestConfig,
 ) {
   try {
     const response = await api.post<ApiEnvelope<TResponse>>(url, body, config);
