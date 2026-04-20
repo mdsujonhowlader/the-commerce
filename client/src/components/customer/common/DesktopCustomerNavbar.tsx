@@ -9,12 +9,15 @@ import { useAuth } from "@clerk/react";
 import {
   Heart,
   LogIn,
+  LogOut,
   ShoppingBag,
+  ShoppingCart,
   Store,
   User,
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router";
+import MobileCustomerNavbar from "./MobileCustomerNavbar";
 
 type NavItem = {
   label: string;
@@ -58,10 +61,10 @@ const dropdownContent =
 const accountDropdownContent = `${dropdownContent} w-56`;
 
 const dropdownItemLink =
-  "flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5";
+  "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5";
 
 const cartBadge =
-  "absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
+  "absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-emerald-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
 
 const wishlistBadge =
   "absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
@@ -83,14 +86,14 @@ function NavTextLink({
   );
 }
 export default function CustomerNavbar() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isSignedIn, signOut } = useAuth();
 
   return (
     <header className={headerClass}>
       <div className={shell}>
         <Link to="/" className={brandWrap}>
           <Store className="w-10 h-10" />
-          <span className={brandWrap}>The-Commerce</span>
+          <span className={brandTitle}>The-Commerce</span>
         </Link>
 
         <div className={desktopCollectionsWrap}>
@@ -100,7 +103,7 @@ export default function CustomerNavbar() {
             icon={collectionPage.icon}
           />
         </div>
-        <div className={desktopNav}>
+        <nav className={desktopNav}>
           <NavTextLink href="/wish-list" label="wishlist" icon={Heart} />
           {isSignedIn ? (
             <DropdownMenu>
@@ -110,30 +113,33 @@ export default function CustomerNavbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                align="start"
+                align="end"
                 className={accountDropdownContent}
               >
-                <DropdownMenuItem>
-                  <Link to={"/account"} className={dropdownItemLink}>
-                    <User className="h-4 w-4" />
-                    <span>Accunt</span>
-                  </Link>
+                <DropdownMenuItem className={dropdownItemLink}>
+                  <User className="h-4 w-4"/>
+                    <span>My Account</span>
                 </DropdownMenuItem>
-                 <DropdownMenuItem>
-                  <Link to={"/sign-in"} className={dropdownItemLink}>
-                    <User className="h-4 w-4" />
-                    <span>Logout</span>
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className={dropdownItemLink}
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <NavTextLink href="/sign-in" label="login" icon={LogIn} />
           )}
-        </div>
-      </div>
 
-      <div></div>
+          <Link to="/cart" className={iconLink}>
+            <ShoppingCart className="h-4.5 w-4.5" />
+            <span className={cartBadge}>0</span>
+          </Link>
+        </nav>
+        <MobileCustomerNavbar isSignedIn={!!isSignedIn} />
+      </div>
     </header>
   );
 }

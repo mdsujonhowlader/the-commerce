@@ -1,6 +1,6 @@
 
 
-export default function CustoemrProfilePage() {
+export default function CustomrProfilePage() {
   return (
     <div>CustoemrProfilePage</div>
   )

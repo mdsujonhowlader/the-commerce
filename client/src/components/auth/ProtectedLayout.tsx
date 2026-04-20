@@ -7,17 +7,16 @@ export function ProtectedLayout() {
   const { isLoaded, isSignedIn } = useAuth();
   const { isBootstraped, status } = userAuthStore();
   const location = useLocation();
-  if (!isLoaded || (isSignedIn && (!isBootstraped || status === "loading")))
-    null;
-  if (isSignedIn && (!isBootstraped || status === "loading")) {
+  if (!isLoaded || (isSignedIn && (!isBootstraped || status === "loading"))){
     return null;
   }
+  
   if (!isSignedIn) {
     return (
       <Navigate
         to="/sign-in"
-        replace
         state={{ from: `${location.pathname}${location.search}` }}
+        replace
       />
     );
   }
