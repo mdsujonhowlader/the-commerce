@@ -5,7 +5,7 @@ import {  requiredAdmin } from "../../middleware/auth.js";
 export const adminCateRoute=Router()
 
 
-adminCateRoute.get('/categories',getCategories)
+adminCateRoute.get('/categories',requiredAdmin,getCategories)
 adminCateRoute.post('/categories',requiredAdmin,createCategory)
 adminCateRoute.put('/categories/:id',requiredAdmin,createCategory)
 adminCateRoute.delete('/categories/:id',requiredAdmin,createCategory)
