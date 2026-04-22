@@ -1,5 +1,6 @@
 import { Readable } from "stream";
 import { v2 as cloudinary } from "cloudinary";
+import { asyncHandler } from "./asyncHandler.js";
 
 type cloudinaryUploadResult = {
   url: string;
@@ -43,3 +44,13 @@ export async function uploadManyBuffersToCloudinary(
     files.map((file) => singleFilUploadToCloudinary(file, folder)),
   );
 }
+
+//delete image
+
+export const deleteImgFromCloudinary = async (publicId: string) => {
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error(`failed to delete image with publicId:${publicId}`, error);
+  }
+};

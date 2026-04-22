@@ -10,7 +10,10 @@ import {
 import { Category } from "../../models/Category.js";
 import { Brand } from "../../models/Brand.js";
 import { AppError } from "../../utils/AppError.js";
-import { uploadManyBuffersToCloudinary } from "../../utils/cloudinary.js";
+import {
+  deleteImgFromCloudinary,
+  uploadManyBuffersToCloudinary,
+} from "../../utils/cloudinary.js";
 import { getDbUserFromReq } from "../../middleware/auth.js";
 
 type UploadedImage = {
@@ -121,7 +124,7 @@ export const updateProducts = asyncHandler(
       | "inactive";
 
     const coverImagePublicId = String(req.body.coverImagePublicId || "").trim();
-   
+
     requireText(title, "Title is Required");
     requireText(description, "Description is Required");
     requireText(category, "Category is Required");
@@ -142,7 +145,7 @@ export const updateProducts = asyncHandler(
 
     const productDoc = await Product.findById(productId);
     const product = requireFound(productDoc, "Product not Found");
-    
+
     const files = (req.files as Express.Multer.File[]) || [];
 
     const uploadNewImages = await uploadManyBuffersToCloudinary(
@@ -178,28 +181,47 @@ export const updateProducts = asyncHandler(
           : index === 0,
       }),
     );
-    product.title=title;
-    product.description=description;
-    product.category=existingCategory._id;
-    product.brand=existingBrand._id;
-    product.stock=stock;
-    product.colors=colors;
-    product.sizes=sizes;
-    product.salePercentage=salePercentage;
-    product.price=price;
-    product.status=status;
-    product.set("images",finalImages)
+    product.title = title;
+    product.description = description;
+    product.category = existingCategory._id;
+    product.brand = existingBrand._id;
+    product.stock = stock;
+    product.colors = colors;
+    product.sizes = sizes;
+    product.salePercentage = salePercentage;
+    product.price = price;
+    product.status = status;
+    product.set("images", finalImages);
 
-    await product.save()
+    await product.save();
 
     await product.populate([
       { path: "category", select: "name" },
       { path: "brand", select: "name" },
     ]);
 
-    res.status(200).json(successResponse(product))
+    res.status(200).json(successResponse(product));
   },
 );
 
+export const deleteProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const productId = req.params.id as string;
 
+    const productDoc = await Product.findById(productId);
+    const product = requireFound(productDoc, "Product not Found");
 
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map((image:UploadedImage) => {
+        if (image.publicId) {
+          return deleteImgFromCloudinary(image.publicId);
+        }
+      });
+      await Promise.all(deletePromises);
+    }
+    await product.deleteOne();
+    res
+      .status(200)
+      .json(successResponse({ message: "Product Deleted Successfully" }));
+  },
+);
