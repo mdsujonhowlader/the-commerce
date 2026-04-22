@@ -1,0 +1,17 @@
+import { AppError } from "./AppError.js";
+
+export function requireText(value: unknown, message: string, statusCode = 400) {
+  if (!String(value || "").trim()) {
+    throw new AppError(statusCode, message);
+  }
+}
+export function requireFound<T>(
+  value: T | null | undefined,
+  message: string,
+  statusCode= 404,
+): T {
+  if (!value) {
+    throw new AppError(statusCode, message);
+  }
+  return value;
+}
