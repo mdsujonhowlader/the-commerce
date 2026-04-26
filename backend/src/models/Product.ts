@@ -68,7 +68,7 @@ export const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    c: {
+    status: {
       type: String,
       enum: ["active", "inactive"],
       default: "active",

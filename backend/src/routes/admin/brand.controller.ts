@@ -42,7 +42,7 @@ export const updateBrand = asyncHandler(
   },
 );
 
-export const deleteCategory = asyncHandler(
+export const deleteBrand = asyncHandler(
   async (req: Request, res: Response) => {
     const brandId = req.params.id;
 
