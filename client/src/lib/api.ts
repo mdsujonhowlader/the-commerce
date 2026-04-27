@@ -99,7 +99,7 @@ export async function apiDelete<TResponse,TBody=unknown>(
     if (response.data.status === "error" || !response.data.data) {
       throw new Error(response.data.errors?.[0]?.message || "Request Failed");
     }
-    return response.data.data;
+    return response.data.data ?? (null as unknown as TResponse);
   } catch (error) {
     throw new Error(getErrorMsg(error));
   }

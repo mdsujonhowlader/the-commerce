@@ -10,6 +10,7 @@ import { clerkMiddleware } from "@clerk/express";
 import { authRouter } from "./routes/auth/auth.routes.js";
 import { adminCateRoute } from "./routes/admin/category.routes.js";
 import { adminProRoute } from "./routes/admin/product.routes.js";
+import { adminBrandRoute } from "./routes/admin/brand.routes.js";
 async function mainEntryFunction() {
   await connectDB();
   const app = express();
@@ -35,6 +36,7 @@ async function mainEntryFunction() {
   app.use(clerkMiddleware());
   app.use("/auth", authRouter);
   app.use('/admin',adminCateRoute)
+  app.use("/admin",adminBrandRoute)
   app.use('/admin',adminProRoute)
   app.use(notFound);
   app.use(errorHandler);
