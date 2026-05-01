@@ -9,11 +9,11 @@ import { ProtectedLayout } from "./components/auth/ProtectedLayout";
 import { RoleGaurdLayout } from "./components/auth/RoleGauredLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import CustomrProfilePage from "./pages/customer/ProfilePage";
-import AdminProducts from "./components/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 export const router = createBrowserRouter([
   {

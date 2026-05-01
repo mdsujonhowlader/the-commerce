@@ -107,3 +107,5 @@ export async function updateAdminProduct(
 
   return apiPut<Product, FormData>(`/admin/product/${productId}`, formData);
 }
+
+
