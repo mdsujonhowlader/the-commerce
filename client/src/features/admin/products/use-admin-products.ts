@@ -42,10 +42,15 @@ export function useAdminProducts() {
     setIsEditingProduct(null);
     setProductDialogOpen(true);
   };
+  
   const closeCreateProductDialog = () => {
     setProductDialogOpen(false);
     setIsEditingProduct(null);
   };
+
+  const refressAll = useCallback(async () => {
+    await Promise.all([loadCategories(), loadBrands(), loadProducts(search)]);
+  }, [loadBrands, loadCategories, loadProducts, search]);
 
   useEffect(() => {
     void loadCategories();
@@ -76,6 +81,7 @@ export function useAdminProducts() {
     setProductDialogOpen,
     isEditingProduct,
     openCreateProductDialog,
-    closeCreateProductDialog
+    closeCreateProductDialog,
+    refressAll
   };
 }

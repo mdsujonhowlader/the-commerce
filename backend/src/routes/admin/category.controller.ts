@@ -19,7 +19,7 @@ export const createCategory = asyncHandler(
 
     requireText(categoryName, "Category name is required");
     const existingCategory = await Category.findOne({ name: categoryName });
-    requireFound(existingCategory, "Category not found");
+    requireFound("Category not found",existingCategory);
     const category = await Category.create({ name: categoryName });
     res.status(201).json(successResponse(category));
   },

@@ -1,8 +1,8 @@
-import ProductsTable, {
-  ProductDialog,
-} from "@/components/admin/product/AdminProducts";
+import ProductsTable from "@/components/admin/product/AdminProductsTable";
+import BrandDialog from "@/components/admin/product/BrandDialog";
 import CategoryDialog from "@/components/admin/product/CategoryDialog";
 import ProductToolbar from "@/components/admin/product/Product-toolbar";
+import ProductDialog from "@/components/admin/product/ProductDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAdminProducts } from "@/features/admin/products/use-admin-products";
@@ -23,12 +23,19 @@ export default function AdminProducts() {
     setProductDialogOpen,
     isEditingProduct,
     openCreateProductDialog,
-    closeCreateProductDialog
+    closeCreateProductDialog,
+    refressAll,
   } = useAdminProducts();
 
   return (
     <div className="space-y-6">
-      <ProductToolbar search={search} onSearchChange={setSearch} onManageCategories={()=>setCategoryDialogOpen(true)} onManageBrands={()=>setBrandDialogOpen(true)} onAddProduct={openCreateProductDialog} />
+      <ProductToolbar
+        search={search}
+        onSearchChange={setSearch}
+        onManageCategories={() => setCategoryDialogOpen(true)}
+        onManageBrands={() => setBrandDialogOpen(true)}
+        onAddProduct={openCreateProductDialog}
+      />
       <Card>
         <CardContent className="p-0">
           <ProductsTable />
@@ -48,9 +55,25 @@ export default function AdminProducts() {
           </Button>
         </div>
       </div>
-      <ProductDialog />
+      <ProductDialog
+        open={productDialogOpen}
+        openChange={setProductDialogOpen}
+        categories={categories ?? []}
+        brands={brands ?? []}
+      />
 
-      <CategoryDialog />
+      <CategoryDialog
+        open={categoryDialogOpen}
+        onOpenChange={setCategoryDialogOpen}
+        onSaved={refressAll}
+        categories={categories ?? []}
+      />
+      <BrandDialog
+        brands={brands ?? []}
+        open={brandDialogOpen}
+        onOpenChange={setBrandDialogOpen}
+        onSaved={refressAll}
+      />
     </div>
   );
 }

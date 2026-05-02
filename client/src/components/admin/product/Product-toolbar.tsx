@@ -31,6 +31,7 @@ export default function ProductToolbar({
         <h1 className="text-2xl font-bold">Products</h1>
         <div className="flex gap-2">
           <Button onClick={onManageCategories} variant="outline">Categories</Button>
+          <Button onClick={onManageBrands} variant="outline">Brands</Button>
           <Button onClick={onAddProduct}>
             <Plus className="mr-2 h-4 w-4" />
             Add Product

@@ -3,8 +3,11 @@ import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import AdminSidebar from "../admin/AdminSidebar";
+import { userAuthStore } from "@/features/auth/store";
+import { UserButton } from "@clerk/react";
 
 export default function AdminLayout() {
+  const {user}=userAuthStore()
   return (
     <div className="flex min-h-screen">
       {/* Desktop Sidebar */}
@@ -35,7 +38,9 @@ export default function AdminLayout() {
           <header className="hidden lg:sticky lg:top-0 lg:z-40 lg:flex lg:h-16 lg:items-center lg:justify-between lg:border-b lg:bg-background lg:px-8">
             <h1 className="text-xl font-semibold">Admin Panel</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">admin@example.com</span>
+              <span className="text-sm text-muted-foreground">
+                <UserButton/>
+              </span>
             </div>
           </header>
 
