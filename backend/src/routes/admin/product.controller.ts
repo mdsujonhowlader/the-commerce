@@ -108,6 +108,9 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateProducts = asyncHandler(
   async (req: Request, res: Response) => {
+
+     
+
     const productId = req.params.id as string;
     const title = String(req.body.title || "").trim();
     const description = String(req.body.description || "").trim();

@@ -57,7 +57,7 @@ export default function ImagePicker({
               <p className="my-2 ">Existing Images</p>
               <div className="grid grid-cols-4 gap-2">
                 {existingImages.map((image) => {
-                  const isCover = (coverImagePublicId = image.publicId);
+                  const isCover = (coverImagePublicId === image.publicId);
                   return (
                     <div className="overflow-hidden rounded-xl border border-border bg-card" key={image.publicId}>
                       <img className="h-28 w-full object-cover" src={image.url} alt="product" />

@@ -20,5 +20,5 @@ adminProRoute.post(
   upload.array("images", 10),
   createProducts,
 );
-adminProRoute.put('/product/:id',requiredAdmin,updateProducts)
+adminProRoute.put('/product/:id',upload.array("images", 10),requiredAdmin,updateProducts)
 // adminProRoute.delete('/product/:id',requiredAdmin,createCategory)
