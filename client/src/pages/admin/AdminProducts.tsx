@@ -25,6 +25,7 @@ export default function AdminProducts() {
     openCreateProductDialog,
     closeCreateProductDialog,
     refressAll,
+    onEditPrduct
   } = useAdminProducts();
 
   return (
@@ -38,7 +39,7 @@ export default function AdminProducts() {
       />
       <Card>
         <CardContent className="p-0">
-          <ProductsTable />
+          <ProductsTable products={products??[]} onEdit={onEditPrduct} loading={loading}/>
         </CardContent>
       </Card>
 
@@ -57,9 +58,19 @@ export default function AdminProducts() {
       </div>
       <ProductDialog
         open={productDialogOpen}
-        openChange={setProductDialogOpen}
+        openChange={(open) => {
+          if (!open) {
+            closeCreateProductDialog();
+            return;
+          }
+
+          setProductDialogOpen(true);
+        }}
         categories={categories ?? []}
         brands={brands ?? []}
+        product={isEditingProduct}
+        onSaved={refressAll}
+        
       />
 
       <CategoryDialog

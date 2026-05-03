@@ -1,11 +1,15 @@
 import { Readable } from "stream";
 import { v2 as cloudinary } from "cloudinary";
-import { asyncHandler } from "./asyncHandler.js";
 
 type cloudinaryUploadResult = {
   url: string;
   publicId: string;
 };
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_URL_NAME,
+  api_key: process.env.CLOUDINARY_URL_KEY,
+  api_secret: process.env.CLOUDINARY_URL_API_SECRET,
+});
 
 export async function singleFilUploadToCloudinary(
   file: Buffer,

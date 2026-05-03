@@ -32,7 +32,7 @@ export type ProductStatus = "active" | "inactive";
 
 export type Product = {
   _id: string;
-  titile: string;
+  title: string;
   description: string;
   category: ProductCategory;
   brand: ProductBrand;
@@ -54,7 +54,6 @@ export type updateCategoryBody = {
   name: string;
 };
 
-
 export type createBrandBody = {
   name: string;
 };
@@ -62,13 +61,12 @@ export type updateBrandBody = {
   name: string;
 };
 export type CreatePorductBody = {
-  titile: string;
+  title: string;
   description: string;
   category: string;
   brand: string;
   stock: number;
   price: number;
-  images: ProductImage[];
   colors: string[];
   sizes: string[];
   salePercentage: number;
@@ -76,7 +74,7 @@ export type CreatePorductBody = {
 };
 
 export type UpdatePorductBody = {
-  titile: string;
+  title: string;
   description: string;
   category: string;
   brand: string;
@@ -90,4 +88,18 @@ export type UpdatePorductBody = {
   coverImagePublicId?: string;
 };
 
-
+export type ProductAddFormState = {
+  title: string;
+  description: string;
+  category: string;
+  brand: string;
+  stock: string;
+  price: string;
+  colors: string[];
+  sizes: string[];
+  salePercentage: string;
+  status: ProductStatus;
+  existingImages: ProductImage[];
+  newFiles: File[];
+  coverImagePublicId: string;
+};

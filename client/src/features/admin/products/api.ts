@@ -66,7 +66,7 @@ function buildProductFormData(
   files: File[],
 ) {
   const formData = new FormData();
-  formData.append("title", body.titile);
+  formData.append("title", body.title);
   formData.append("description", body.description);
   formData.append("category", body.category);
   formData.append("brand", body.brand);

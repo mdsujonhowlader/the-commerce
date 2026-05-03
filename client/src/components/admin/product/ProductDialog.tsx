@@ -20,25 +20,56 @@ import { Textarea } from "@/components/ui/textarea";
 import ColorPicker from "./ColorPicker";
 import SizeSelector from "./SizeSelector";
 import ImagePicker from "./ImagePicker";
-import type { Brand, Category } from "@/features/admin/products/types";
+import type {
+  Brand,
+  Category,
+  Product,
+  ProductStatus,
+} from "@/features/admin/products/types";
+import { useProductsAddForm } from "@/features/admin/products/use-product-add-form";
 
 type ProductDialogProps = {
   open: boolean;
-  categories:Category[],
-  brands:Brand[],
+  categories: Category[];
+  product: Product | null;
+  brands: Brand[];
+  onSaved: () => Promise<void>;
   openChange: (open: boolean) => void;
 };
 export default function ProductDialog({
   open,
   categories,
+  product,
+  onSaved,
   brands,
   openChange,
 }: ProductDialogProps) {
+  const {
+    forms,
+    addColor,
+    removeColor,
+    addFiles,
+    toggleSizes,
+    submit,
+    updatedField,
+    saving,
+    isEditMode,
+    removeExistingImages,
+    changeCoverImage,
+  } = useProductsAddForm({
+    open,
+    product,
+    onSaved,
+    onClose: () => openChange(false),
+  });
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent className="w-2/3 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? "Update Product" : "Add New Product"}
+          </DialogTitle>
           <DialogDescription>
             Fill in the product details below to add a new product.
           </DialogDescription>
@@ -49,7 +80,12 @@ export default function ProductDialog({
           <div className="">
             <div className="space-y-2 w-full">
               <Label htmlFor="name">Product Title</Label>
-              <Input type="text" placeholder="Enter product title" />
+              <Input
+                value={forms.title}
+                onChange={(event) => updatedField("title", event.target.value)}
+                type="text"
+                placeholder="Enter product title"
+              />
             </div>
             {/* <div className="space-y-2">
               <Label htmlFor="sku">SKU</Label>
@@ -61,7 +97,10 @@ export default function ProductDialog({
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
-              id="description"
+              value={forms.description}
+              onChange={(event) =>
+                updatedField("description", event.target.value)
+              }
               placeholder="Enter product description"
               rows={3}
             />
@@ -72,17 +111,19 @@ export default function ProductDialog({
             {/* Brand */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Brand</Label>
-              <Select>
+              <Select
+                value={forms.brand}
+                onValueChange={(value) => updatedField("brand", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Brand" />
                 </SelectTrigger>
                 <SelectContent>
-                  {
-                    brands.map((brandItem)=>(
-
-                  <SelectItem key={brandItem._id} value={brandItem.name}>{brandItem.name}</SelectItem>
-                    ))
-                    }
+                  {brands.map((brandItem) => (
+                    <SelectItem key={brandItem._id} value={brandItem._id}>
+                      {brandItem.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -90,17 +131,19 @@ export default function ProductDialog({
             {/* Category */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Category</Label>
-              <Select>
+              <Select
+                value={forms.category}
+                onValueChange={(value) => updatedField("category", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {
-                    categories.map(cat=>(
-
-                  <SelectItem key={cat._id} value={cat.name}>{cat.name}</SelectItem>
-                    ))
-                  }
+                  {categories.map((cat) => (
+                    <SelectItem key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -110,11 +153,21 @@ export default function ProductDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="price">Price (Taka)</Label>
-              <Input id="price" type="number" step="0.01" placeholder="0.00" />
+              <Input
+                value={forms.price}
+                onChange={(event) => updatedField("price", event.target.value)}
+                type="number"
+                placeholder="0.00"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="stock">Stock Quantity</Label>
-              <Input id="stock" type="number" placeholder="0" />
+              <Input
+                value={forms.stock}
+                onChange={(event) => updatedField("stock", event.target.value)}
+                type="number"
+                placeholder="0"
+              />
             </div>
           </div>
 
@@ -122,11 +175,23 @@ export default function ProductDialog({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             <div className="space-y-2">
               <Label htmlFor="salePerchantage">Sale Perchantage</Label>
-              <Input type="number" placeholder="Sale Perchantage %" />
+              <Input
+                value={forms.salePercentage}
+                onChange={(event) =>
+                  updatedField("salePercentage", event.target.value)
+                }
+                type="number"
+                placeholder="Sale Perchantage %"
+              />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select>
+              <Select
+                value={forms.status}
+                onValueChange={(value) =>
+                  updatedField("status", value as ProductStatus)
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
@@ -140,18 +205,40 @@ export default function ProductDialog({
 
           <div className="w-full">
             <div className="grid grid-cols-2 gap-4">
-              <ColorPicker />
-              <SizeSelector />
+              <ColorPicker
+                colors={forms.colors}
+                onAdd={addColor}
+                onRemove={removeColor}
+              />
+              <SizeSelector
+                selectedSizes={forms.sizes}
+                onToggle={toggleSizes}
+              />
             </div>
           </div>
 
           {/* Image Upload */}
-         <ImagePicker/>
+          <ImagePicker
+            existingImages={forms.existingImages}
+            newFiles={forms.newFiles}
+            coverImagePublicId={forms.coverImagePublicId}
+            onFileAdd={addFiles}
+            onRemoveExistingImages={removeExistingImages}
+            onChangeCoverImage={changeCoverImage}
+          />
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={()=>openChange(false)}>Cancel</Button>
-          <Button>Add Product</Button>
+          <Button variant="outline" onClick={() => openChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={submit} disabled={saving}>
+            {saving
+              ? "saving..."
+              : isEditMode
+                ? "Update Product"
+                : "Add Product"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

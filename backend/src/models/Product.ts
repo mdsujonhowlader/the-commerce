@@ -22,7 +22,7 @@ const productImageSchema=new mongoose.Schema({
 
 export const ProductSchema = new mongoose.Schema(
   {
-    titile: {
+    title: {
       type: String,
       required: true,
       trim:true

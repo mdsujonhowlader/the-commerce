@@ -11,7 +11,7 @@ export function useAdminProducts() {
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [brandDialogOpen, setBrandDialogOpen] = useState(false);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
-  const [isEditingProduct, setIsEditingProduct] = useState<Product[] | null>(
+  const [isEditingProduct, setIsEditingProduct] = useState<Product | null>(
     null,
   );
   setIsEditingProduct;
@@ -43,6 +43,10 @@ export function useAdminProducts() {
     setProductDialogOpen(true);
   };
   
+  const onEditPrduct=(product:Product)=>{
+    setIsEditingProduct(product)
+    setProductDialogOpen(true)
+  }
   const closeCreateProductDialog = () => {
     setProductDialogOpen(false);
     setIsEditingProduct(null);
@@ -82,6 +86,7 @@ export function useAdminProducts() {
     isEditingProduct,
     openCreateProductDialog,
     closeCreateProductDialog,
-    refressAll
+    refressAll,
+    onEditPrduct
   };
 }
