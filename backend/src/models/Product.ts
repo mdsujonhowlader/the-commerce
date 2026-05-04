@@ -1,68 +1,93 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { HydratedDocument, Schema, Types } from "mongoose";
 
-const productImageSchema=new mongoose.Schema({
-  url:{
-    type:String,
-    required:true,
-    trim:true
-  },
-  publicId:{
-    type:String,
-    required:true,
-    trim:true
-  },
-  isCover:{
-    type:Boolean,
-    default:false
-  },
-  
+export type ProductImage = {
+  url: string;
+  publicId: string;
+  isCover: boolean;
+};
+export type ProductSize = "S" | "M" | "L" | "XL" | "XXL";
+export type ProductStatus = "active" | "inactive";
+export type Product = {
+  title: string;
+  description: string;
+  category: Types.ObjectId;
+  brand: Types.ObjectId;
+  stock: number;
+  price: number;
+  images: ProductImage[];
+  colors: string[];
+  sizes: ProductSize[];
+  salePercentage: number;
+  status: ProductStatus;
+  createdBy: Types.ObjectId;
+  createdAt: Date;
+  updateAt: Date;
+};
 
-},{ _id:false})
-
+export type ProductDocument = HydratedDocument<Product>;
+const productImageSchema = new mongoose.Schema(
+  {
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    publicId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    isCover: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false },
+);
 
 export const ProductSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
-      trim:true
+      trim: true,
     },
     description: {
       type: String,
       required: true,
-      trim:true
+      trim: true,
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref:'Category',
+      ref: "Category",
       required: true,
     },
     brand: {
       type: Schema.Types.ObjectId,
-      ref:'Brand',
+      ref: "Brand",
       required: true,
     },
     stock: {
       type: Number,
       required: true,
-      min:0
+      min: 0,
     },
     price: {
       type: Number,
       required: true,
     },
-    images:{
-      type:[productImageSchema],
-      default:[]
+    images: {
+      type: [productImageSchema],
+      default: [],
     },
-    colors:{
+    colors: {
       type: [String],
-      default:[]
+      default: [],
     },
-    sizes:{
+    sizes: {
       type: [String],
-      default:[],
-      enum:["S", "M", "L", "XL"]
+      default: [],
+      enum: ["S", "M", "L", "XL"],
     },
     salePercentage: {
       type: Number,
@@ -83,4 +108,5 @@ export const ProductSchema = new mongoose.Schema(
 );
 
 export const Product =
-  mongoose.models.Product || mongoose.model("Product", ProductSchema);
+  mongoose.models.Product ||
+  mongoose.model<ProductDocument>("Product", ProductSchema);

@@ -67,7 +67,7 @@ export default function BrandDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="w-2/3 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Manage Brands</DialogTitle>
           <DialogDescription>Add or remove product Brands.</DialogDescription>

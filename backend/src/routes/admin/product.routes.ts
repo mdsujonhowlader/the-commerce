@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requiredAdmin } from "../../middleware/auth.js";
-import { createProducts, getProducts, updateProducts } from "./product.controller.js";
+import { createProducts, getProducts, updateProducts } from "../../controller/admin/product.controller.js";
 import multer from "multer";
 
 export const adminProRoute = Router();

@@ -5,7 +5,7 @@ import {
   deleteBrand,
   getBrand,
   updateBrand,
-} from "./brand.controller.js";
+} from "../../controller/admin/brand.controller.js";
 
 export const adminBrandRoute = Router();
 

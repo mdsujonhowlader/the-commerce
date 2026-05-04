@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCategory, getCategories, updateCategory } from "./category.controller.js";
+import { createCategory, getCategories, updateCategory } from "../../controller/admin/category.controller.js";
 import {  requiredAdmin } from "../../middleware/auth.js";
 
 export const adminCateRoute=Router()
