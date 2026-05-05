@@ -11,6 +11,7 @@ export function useBootstapAuth() {
   useEffect(() => {
     setApiTokenGetter(async () => {
       const token = await getToken();
+      
       return token ?? null;
     });
   }, [getToken]);
