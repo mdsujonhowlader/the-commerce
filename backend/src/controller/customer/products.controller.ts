@@ -39,7 +39,7 @@ export const getProducts = asyncHandler(
     }
 
     let sortOptions: Record<string, 1 | -1> = {
-      createdAt: 1,
+      createdAt: -1,
     };
     if (sort === "price-low") {
       sortOptions = { price: 1 };

@@ -11,6 +11,9 @@ import { authRouter } from "./routes/auth/auth.routes.js";
 import { adminCateRoute } from "./routes/admin/category.routes.js";
 import { adminProRoute } from "./routes/admin/product.routes.js";
 import { adminBrandRoute } from "./routes/admin/brand.routes.js";
+import { customerProductRoute } from "./routes/customer/product.routes.js";
+import { customerCategoryRoute } from "./routes/customer/category.routes.js";
+import { customerBrandRoute } from "./routes/customer/brand.routes.js";
 async function mainEntryFunction() {
   await connectDB();
   const app = express();
@@ -35,6 +38,13 @@ async function mainEntryFunction() {
   });
   app.use(clerkMiddleware());
   app.use("/auth", authRouter);
+  
+  //customer
+  app.use('/customer',customerProductRoute)
+  app.use('/customer',customerCategoryRoute)
+ app.use('/customer',customerBrandRoute)
+ 
+  //admin
   app.use('/admin',adminCateRoute)
   app.use("/admin",adminBrandRoute)
   app.use('/admin',adminProRoute)
