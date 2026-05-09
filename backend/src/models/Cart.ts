@@ -1,20 +1,21 @@
 import mongoose, { HydratedDocument, Schema, Types } from "mongoose";
+import { ProductSize } from "./Product.js";
 
 export type CartItem = {
   product: Types.ObjectId;
   quantity: number;
   color?: string;
-  size?: string;
+  size?: ProductSize;
 };
 
-export type Cart = {
+export type ICart = {
   user: Types.ObjectId;
   items: CartItem[];
   createdAt: Date;
   updatedAt: Date;
 };
 
-export type CartDocument = HydratedDocument<Cart>;
+export type CartDocument = HydratedDocument<ICart>;
 
 const cartItemSchema = new mongoose.Schema<CartItem>(
   {
@@ -40,7 +41,7 @@ const cartItemSchema = new mongoose.Schema<CartItem>(
   { _id: false },
 );
 
-const CartSchema = new mongoose.Schema<Cart>(
+const CartSchema = new mongoose.Schema<ICart>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -57,4 +58,5 @@ const CartSchema = new mongoose.Schema<Cart>(
 );
 
 export const Cart =
-  mongoose.models.Cart || mongoose.model<Cart>("Cart", CartSchema);
+  (mongoose.models.Cart as mongoose.Model<ICart>) ||
+  mongoose.model<ICart>("Cart", CartSchema);

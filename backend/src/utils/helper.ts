@@ -5,7 +5,11 @@ export function requireText(value: unknown, message: string, statusCode = 400) {
     throw new AppError(statusCode, message);
   }
 }
-export function requireNumber(value: unknown, message: string, statusCode = 400) {
+export function requireNumber(
+  value: unknown,
+  message: string,
+  statusCode = 400,
+) {
   if (Number.isNaN(value)) {
     throw new AppError(statusCode, message);
   }
@@ -13,9 +17,9 @@ export function requireNumber(value: unknown, message: string, statusCode = 400)
 export function requireFound<T>(
   value: T | null | undefined,
   message: string,
-  statusCode= 404,
+  statusCode = 404,
 ): T {
-  if (!value) {
+  if (value === null || value === undefined) {
     throw new AppError(statusCode, message);
   }
   return value;
