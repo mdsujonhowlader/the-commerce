@@ -149,7 +149,7 @@ export const deleteAddressById = asyncHandler(
       (currentAddress) => String(currentAddress._id) === addressId,
     );
 
-    if (!adressesUserWantToDeleted) {
+    if (adressesUserWantToDeleted<0) {
       throw new AppError(404, "Address Not Found");
     }
     const wasDefault = addresses[adressesUserWantToDeleted].isDefault;
