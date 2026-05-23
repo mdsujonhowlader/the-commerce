@@ -448,3 +448,23 @@ export const addWishListItem = asyncHandler(
     res.json(successResponse(await getWishlistResponse(String(dbUser._id))));
   },
 );
+
+export const deleteWishlist = asyncHandler(
+  async (req: Request, res: Response) => {
+    const dbUser = await getDbUserFromReq(req);
+    const productId = String(req.body.productId || "").trim();
+    requireText(productId, "Product id is required");
+
+    let wishlist = await Wishlist.findOne({ user: dbUser._id });
+
+    if (!wishlist) {
+      res.json(successResponse({ items: [] }));
+    }
+    wishlist.products = wishlist.products.filter(
+      (item: Types.ObjectId) => String(item) !== productId,
+    );
+
+    await wishlist.save();
+    res.json(successResponse(await getWishlistResponse(String(dbUser._id))));
+  },
+);
