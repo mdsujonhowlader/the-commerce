@@ -23,7 +23,7 @@ export default function AdminSidebar() {
 
   return (
     <aside className="flex min-h-screen flex-col border-r bg-card">
-      <div className="border-b p-6">
+      <div className=" p-5">
         <h1 className="text-xl font-bold">Admin Panel</h1>
       </div>
 

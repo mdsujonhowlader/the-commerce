@@ -124,7 +124,7 @@ export default function CategoryDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => handleClose(false)}>
             Close
           </Button>
         </DialogFooter>

@@ -52,7 +52,7 @@ const brandWrap = "flex items-center gap-3";
 const brandTitle =
   "text-[25px] font-semibold tracking-[-0.02em] text-foreground";
 
-const brandBlock = "px-5 py-6 sm:px-6";
+//const brandBlock = "px-5 py-6 sm:px-6";
 
 const drawerSection = "space-y-3 px-5 py-5 sm:px-6";
 

@@ -66,8 +66,7 @@ const dropdownItemLink =
 const cartBadge =
   "absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-emerald-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
 
-const wishlistBadge =
-  "absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
+//const wishlistBadge ="absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold leading-5 text-black";
 
 function NavTextLink({
   href,

@@ -30,13 +30,13 @@ export default function AdminLayout() {
                 <AdminSidebar />
               </SheetContent>
             </Sheet>
-            <h1 className="text-lg font-semibold">Admin Panel</h1>
+            <h1 className="text-sm font-semibold">Admin Panel</h1>
             <div className="w-10" />
           </header>
 
           {/* Desktop Header */}
           <header className="hidden lg:sticky lg:top-0 lg:z-40 lg:flex lg:h-16 lg:items-center lg:justify-between lg:border-b lg:bg-background lg:px-8">
-            <h1 className="text-xl font-semibold">Admin Panel</h1>
+            {user && <span className="text-sm ">{`Hello sir, ${user.name}`}</span>}
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">
                 <UserButton/>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   type Product,
   type ProductAddFormState,
@@ -47,7 +47,7 @@ function mapProductToFormValues(product: Product): ProductAddFormState {
     price: String(product.price),
     colors: product.colors ?? [],
     sizes: product.sizes ?? [],
-    salePercentage: String(product.salePercentage) ?? "0",
+    salePercentage: String(product.salePercentage ?? "0"),
     status: product.status,
     existingImages: product.images ?? [],
     newFiles: [],
@@ -62,26 +62,35 @@ export function useProductsAddForm({
   onClose,
 }: productAddFormProps) {
   const [forms, setForms] = useState<ProductAddFormState>(getEmptyForms());
+  const [prevProduct, setPrevProduct] = useState<Product | null>(null);
+  const [prevOpen, setPrevOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    setForms(product ? mapProductToFormValues(product) : getEmptyForms());
-  }, [open, product]);
+  // useEffect(() => {
+  //   setForms(open && product ? mapProductToFormValues(product) : getEmptyForms());
+  // }, [open, product]);
+
+
+  if (product !== prevProduct || open !== prevOpen) {
+    setPrevProduct(product);
+    setPrevOpen(open);
+    setForms(open && product ? mapProductToFormValues(product) : getEmptyForms());
+  }
 
   function toggleSizes(size: string) {
     setForms((prev) => ({
       ...prev,
-      sizes: prev?.sizes.includes(size)
+      sizes: prev.sizes.includes(size)
         ? prev.sizes.filter((item) => item !== size)
-        : [...prev?.sizes, size],
+        : [...prev.sizes, size],
     }));
   }
   function addColor(color: string) {
     setForms((prev) => ({
       ...prev,
-      colors: prev?.colors.includes(color)
+      colors: prev.colors.includes(color)
         ? prev.colors
-        : [...prev?.colors, color],
+        : [...prev.colors, color],
     }));
   }
 
@@ -128,10 +137,8 @@ export function useProductsAddForm({
     });
   }
 
-
-  function changeCoverImage(publicId:string){
-    updatedField('coverImagePublicId',publicId)
-    
+  function changeCoverImage(publicId: string) {
+    updatedField("coverImagePublicId", publicId);
   }
   async function submit() {
     if (
@@ -163,7 +170,7 @@ export function useProductsAddForm({
           },
           forms.newFiles,
         );
-        toast("Product Updated Successfully")
+        toast("Product Updated Successfully");
       } else {
         await createAdminProduct(
           {
@@ -180,11 +187,12 @@ export function useProductsAddForm({
           },
           forms.newFiles,
         );
-        toast("Product uploaded Successfully")
+        toast("Product uploaded Successfully");
       }
       await onSaved();
       onClose();
     } catch (error) {
+      console.error(error);
     } finally {
       setSaving(false);
     }
@@ -201,6 +209,6 @@ export function useProductsAddForm({
     saving,
     submit,
     removeExistingImages,
-    changeCoverImage
+    changeCoverImage,
   };
 }

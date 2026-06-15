@@ -14,7 +14,6 @@ export function useAdminProducts() {
   const [isEditingProduct, setIsEditingProduct] = useState<Product | null>(
     null,
   );
-  setIsEditingProduct;
 
   const loadCategories = useCallback(async () => {
     const data = await getAdminCategories();
@@ -32,7 +31,7 @@ export function useAdminProducts() {
       const data = await getAdminProducts(searchValue);
       setProducts(data ?? []);
     } catch (error) {
-      console.error("failed to loading data");
+      console.error("failed to loading data", error);
     } finally {
       setLoading(false);
     }
@@ -42,11 +41,11 @@ export function useAdminProducts() {
     setIsEditingProduct(null);
     setProductDialogOpen(true);
   };
-  
-  const onEditPrduct=(product:Product)=>{
-    setIsEditingProduct(product)
-    setProductDialogOpen(true)
-  }
+
+  const onEditPrduct = (product: Product) => {
+    setIsEditingProduct(product);
+    setProductDialogOpen(true);
+  };
   const closeCreateProductDialog = () => {
     setProductDialogOpen(false);
     setIsEditingProduct(null);
@@ -57,12 +56,22 @@ export function useAdminProducts() {
   }, [loadBrands, loadCategories, loadProducts, search]);
 
   useEffect(() => {
-    void loadCategories();
-  }, [loadCategories]);
+    let isMounted = true;
+    const initData = async () => {
+      if (isMounted) {
+        await Promise.all([loadCategories(), loadBrands()]);
+      }
+    };
 
-  useEffect(() => {
-    void loadBrands();
-  }, []);
+    void initData();
+    return () => {
+      isMounted = false;
+    };
+  }, [loadCategories, loadBrands]);
+
+  // useEffect(() => {
+  //   void loadBrands();
+  // }, [loadBrands]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,6 +96,6 @@ export function useAdminProducts() {
     openCreateProductDialog,
     closeCreateProductDialog,
     refressAll,
-    onEditPrduct
+    onEditPrduct,
   };
 }
