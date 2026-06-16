@@ -1,0 +1,34 @@
+import mongoose from "mongoose";
+const PromoSchema = new mongoose.Schema({
+    code: {
+        type: String,
+        required: true,
+        trim: true,
+        uppercase: true,
+    },
+    percentage: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 100,
+    },
+    count: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    minimumOrderValue: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    startAt: {
+        type: Date,
+        required: true,
+    },
+    endsAt: {
+        type: Date,
+        required: true,
+    }
+}, { timestamps: true, versionKey: false });
+export const Promo = mongoose.models.Promo || mongoose.model("Promo", PromoSchema);
