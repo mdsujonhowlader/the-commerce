@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "rm -rf dist && tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -22,14 +24,20 @@
     "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
+    "sslcommerz-lts": "^1.2.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.6.0",
+    "eslint": "^10.5.0",
+    "globals": "^17.6.0",
+    "jiti": "^2.7.0",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
   }
 }

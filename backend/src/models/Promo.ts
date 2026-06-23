@@ -1,6 +1,6 @@
 import mongoose, { HydratedDocument } from "mongoose";
 
-export type Promo = {
+export type IPromo = {
   code: string;
   percentage: number;
   count: number;
@@ -11,9 +11,9 @@ export type Promo = {
   updatedAt: Date;
 };
 
-export type PromoDocument = HydratedDocument<Promo>;
+export type PromoDocument = HydratedDocument<IPromo>;
 
-const PromoSchema = new mongoose.Schema<Promo>({
+const PromoSchema = new mongoose.Schema<IPromo>({
   code: {
     type: String,
     required: true,
@@ -47,4 +47,4 @@ const PromoSchema = new mongoose.Schema<Promo>({
 },{timestamps:true,versionKey:false});
 
 export const Promo =
-  mongoose.models.Promo || mongoose.model<Promo>("Promo", PromoSchema);
+  mongoose.models.Promo || mongoose.model<IPromo>("Promo", PromoSchema);

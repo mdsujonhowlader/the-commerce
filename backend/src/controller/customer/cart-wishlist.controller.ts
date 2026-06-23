@@ -455,7 +455,7 @@ export const deleteWishlist = asyncHandler(
     const productId = String(req.body.productId || "").trim();
     requireText(productId, "Product id is required");
 
-    let wishlist = await Wishlist.findOne({ user: dbUser._id });
+    const wishlist = await Wishlist.findOne({ user: dbUser._id });
 
     if (!wishlist) {
       res.json(successResponse({ items: [] }));

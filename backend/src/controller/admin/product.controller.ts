@@ -108,9 +108,6 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateProducts = asyncHandler(
   async (req: Request, res: Response) => {
-
-     
-
     const productId = req.params.id as string;
     const title = String(req.body.title || "").trim();
     const description = String(req.body.description || "").trim();
@@ -159,7 +156,7 @@ export const updateProducts = asyncHandler(
       publicId: image.publicId,
       isCover: false,
     }));
-    let existingImages: UploadedImage[] = product.images.map(
+    const existingImages: UploadedImage[] = product.images.map(
       (img: UploadedImage) => ({
         url: img.url,
         publicId: img.publicId,

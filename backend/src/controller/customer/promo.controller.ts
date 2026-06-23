@@ -3,7 +3,8 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { successResponse } from "../../utils/envelope.js";
 import { requireText } from "../../utils/helper.js";
 import { AppError } from "../../utils/AppError.js";
-import { Promo } from "../../models/Promo.js";
+import { IPromo, Promo } from "../../models/Promo.js";
+
 
 export const customerApplyPromos = asyncHandler(
   async (req: Request, res: Response) => {
@@ -17,7 +18,8 @@ export const customerApplyPromos = asyncHandler(
     if (Number.isNaN(orderValue) || orderValue < 0) {
       throw new AppError(400, "Valid order value is required");
     }
-    const promo = await Promo.findOne({ code });
+    const promo = await Promo.findOne({ code }).lean<IPromo>();
+  
     if (!promo) {
       throw new AppError(404, "PromoCode is not found");
     }

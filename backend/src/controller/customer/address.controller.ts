@@ -5,7 +5,6 @@ import { User } from "../../models/User.js";
 import { requireFound, requireText } from "../../utils/helper.js";
 import { successResponse } from "../../utils/envelope.js";
 import { AppError } from "../../utils/AppError.js";
-import { log } from "node:console";
 
 type AddressItem = {
   _id?: string;
@@ -107,9 +106,8 @@ export const updateCustomerAddressById = asyncHandler(
     const foundUser = requireFound(user, "User not Found on DB");
     const addresses = (foundUser.addresses || []) as AddressItem[];
 
-    const getAddressTheUserWantToUpdate = addresses.find((currentAddress) => {
-      currentAddress._id === addressId;
-    });
+    const getAddressTheUserWantToUpdate = addresses.find(
+      (currentAddress) => currentAddress._id === addressId);
 
     if (!getAddressTheUserWantToUpdate) {
       throw new AppError(404, "Address is not found");
@@ -127,7 +125,7 @@ export const updateCustomerAddressById = asyncHandler(
     getAddressTheUserWantToUpdate.state = state;
     getAddressTheUserWantToUpdate.postalCode = postalCode;
 
-    foundUser.save();
+   await foundUser.save();
     const items = [...(foundUser.addresses as AddressItem[])]
       .sort((a, b) => Number(b.isDefault) - Number(a.isDefault))
       .map(mappedAddress);
