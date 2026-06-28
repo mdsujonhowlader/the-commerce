@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, Types, Schema, model } from "mongoose";
+import mongoose, { HydratedDocument, Schema, Types, model } from "mongoose";
 
 export type PaymentStatus = "pending" | "paid" | "failed";
 
@@ -52,7 +52,7 @@ const OrderItemSchema = new Schema<OrderItem>(
 const OrderSchema = new Schema<Order>(
   {
     user: {
-      types: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -137,5 +137,8 @@ const OrderSchema = new Schema<Order>(
   { timestamps: true, versionKey: false },
 );
 
+OrderSchema.index({ user: 1, createdAt: -1 });
+OrderSchema.index({ paymentStatus: 1, createdAt: -1 });
+OrderSchema.index({ orderStatus: 1, createdAt: -1 });
 export const Order =
   mongoose.models.Order || model<Order>("Order", OrderSchema);
