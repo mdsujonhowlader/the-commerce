@@ -1,6 +1,6 @@
-import { type Request, type Response } from "express";
+import type { Request, Response } from "express";
+
 import { Types } from "mongoose";
-import crypto from "node:crypto";
 import { getDbUserFromReq } from "../../middleware/auth.js";
 import { Cart } from "../../models/Cart.js";
 import { Order } from "../../models/Order.js";
@@ -11,7 +11,6 @@ import { AppError } from "../../utils/AppError.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { successResponse } from "../../utils/envelope.js";
 import { requireFound, requireText } from "../../utils/helper.js";
-import { initPayment, validatePayment } from "../../utils/sslcommerz.js";
 
 type UserAddress = {
   _id: Types.ObjectId;
@@ -25,6 +24,7 @@ type CheckoutUserRow = {
   _id: Types.ObjectId;
   name?: string;
   email: string;
+  points: number;
   addresses: UserAddress[];
 };
 
@@ -54,10 +54,7 @@ type PromoRow = {
   endsAt: Date;
 };
 
-const FRONTEND_URL =
-  process.env.CORS_ORIGINS?.split(",")[0]?.trim() || "http://localhost:5173";
-
-export const checkoutSession = asyncHandler(
+export const checkoutSessionForPoints = asyncHandler(
   async (req: Request, res: Response) => {
     const dbUser = await getDbUserFromReq(req);
     const addressId = String(req.body.addressId).trim();
@@ -150,135 +147,93 @@ export const checkoutSession = asyncHandler(
       discountAmmount = Math.round((subTotal * foundPromo.percentage) / 100);
     }
     const totalAmount = Math.max(subTotal - discountAmmount, 0);
-    const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-    const deliveryName = selectAddress.fullName;
-    const deliveryAddress = selectAddress.address;
-    const cus_city = selectAddress.state;
-    const cus_postcode = selectAddress.postalCode;
-    const tran_id = `ORDER-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
 
-    await Order.create({
-      user: dbUser._id,
-      customerName: foundUser.name || deliveryName,
-      customerEmail: foundUser.email,
-      items,
-      totalItems,
-      deliveryName,
-      deliveryAddress,
-      promocode: appliedPromoCode || undefined,
-      discountAmmount: discountAmmount || undefined,
-      paymentStatus: "pending",
-      orderStatus: "placed",
-      totalAmmount: totalAmount,
-      sslCommercePayOrderId: tran_id,
-      paymentId: tran_id,
-      paidAt: new Date(),
-    });
-
-    const paymentData = {
-      total_amount: totalAmount,
-      currency: "BDT" as const,
-      tran_id,
-      success_url: `${BASE_URL}/customer/order/success`,
-      fail_url: `${BASE_URL}/customer/order/fail`,
-      cancel_url: `${BASE_URL}/customer/order/cancel`,
-      ipn_url: `${BASE_URL}/customer/order/ipn`,
-      shipping_method: "Courier",
-      product_name: `Order ${tran_id}`,
-      product_category: "General",
-      product_profile: "general",
-      cus_name: foundUser.name || deliveryName,
-      cus_email: foundUser.email || "",
-      cus_add1: deliveryAddress,
-      cus_add2: "",
-      cus_city,
-      cus_state: cus_city,
-      cus_postcode,
-      cus_country: "Bangladesh",
-      cus_phone: "",
-      cus_fax: "",
-      ship_name: deliveryName,
-      ship_add1: deliveryAddress,
-      ship_add2: "",
-      ship_city: "",
-      ship_state: "",
-      ship_postcode: 0,
-      ship_country: "Bangladesh",
-    };
-
-    const sslResponse = await initPayment(paymentData);
-
-    res.status(200).json(
-      successResponse({
-        GatewayPageURL: sslResponse.GatewayPageURL,
-      }),
+    if (totalAmount > foundUser.points) {
+      throw new AppError(400, "Not enough points for this order");
+    }
+    const deductedUserPoints = await User.updateOne(
+      {
+        _id: dbUser._id,
+        points: { $gte: totalAmount },
+      },
+      {
+        $inc: { points: -totalAmount },
+      },
     );
-  },
-);
 
-export const orderSuccess = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { val_id, tran_id } = req.body();
-    if (val_id) {
-      const validation = await validatePayment(val_id);
-      if (
-        validation?.status === "VALID" ||
-        validation.status === "VALIDATION"
-      ) {
-        await Order.findOneAndUpdate(
+    if (deductedUserPoints.matchedCount) {
+      throw new AppError(400, "Not enough points for this order");
+    }
+    try {
+      for (const item of items) {
+        const updated = await Product.updateOne(
           {
-            sslCommercePayOrderId: tran_id,
+            _id: item.products,
+            stock: { $gte: item.quantity },
+          },
+          { $inc: { stock: -item.quantity } },
+        );
+        if (!updated.matchedCount) {
+          throw new AppError(400, "One or more cart items are out of stock");
+        }
+      }
+      if (appliedPromoCode) {
+        await Promo.updateOne(
+          {
+            code: appliedPromoCode,
+            count: { $gt: 0 },
           },
           {
-            paymentStatus: "paid",
-            paymentId: val_id,
-            paidAt: new Date(),
+            $inc: { count: -1 },
           },
         );
       }
+      await Cart.updateOne({ user: dbUser._id }, { $set: { items: [] } });
+      const pointsPaymentId = `points_${Date.now()}`;
+      const deliveryAddress = [
+        selectAddress.address,
+        selectAddress.state,
+        selectAddress.postalCode,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+      await Order.create({
+        user: dbUser._id,
+        customerName: foundUser.name || selectAddress.fullName,
+        customerEmail: foundUser.email,
+        items,
+        totalItems,
+        deliveryName: selectAddress.fullName,
+        deliveryAddress,
+        promocode: appliedPromoCode || undefined,
+        discountAmmount: discountAmmount || undefined,
+        paymentStatus: "paid",
+        orderStatus: "placed",
+        totalAmmount: totalAmount,
+        sslCommercePayOrderId: pointsPaymentId,
+        paymentId: pointsPaymentId,
+        paidAt: new Date(),
+      });
+      const updateUser = await User.findById(dbUser._id)
+        .select("points")
+        .lean<{ points: number }>();
+      res.json(
+        successResponse({
+          _id: String(dbUser._id),
+          totalPoints: updateUser?.points || 0,
+        }),
+      );
+    } catch (error) {
+      await User.updateOne(
+        {
+          _id: dbUser._id,
+        },
+        {
+          $inc: { points: totalAmount },
+        },
+      );
+      throw error;
     }
-    res.redirect(`${FRONTEND_URL}/order/success?tran_id=${tran_id || ""}`);
   },
 );
-
-export const orderFail = asyncHandler(async (req: Request, res: Response) => {
-  const { tran_id } = req.body;
-
-  if (tran_id) {
-    await Order.findOneAndUpdate(
-      { sslCommercePayOrderId: tran_id },
-      { paymentStatus: "failed" },
-    );
-  }
-
-  res.redirect(`${FRONTEND_URL}/order/failed?tran_id=${tran_id || ""}`);
-});
-
-export const orderCancel = asyncHandler(async (req: Request, res: Response) => {
-  const { tran_id } = req.body;
-
-  if (tran_id) {
-    await Order.findOneAndUpdate(
-      { sslCommercePayOrderId: tran_id },
-      { paymentStatus: "failed" },
-    );
-  }
-
-  res.redirect(`${FRONTEND_URL}/order/cancelled?tran_id=${tran_id || ""}`);
-});
-
-export const orderIpn = asyncHandler(async (req: Request, res: Response) => {
-  const { val_id, tran_id, status } = req.body;
-
-  if (val_id && (status === "VALID" || status === "VALIDATED")) {
-    const validation = await validatePayment(val_id);
-    if (validation?.status === "VALID" || validation?.status === "VALIDATED") {
-      await Order.findOneAndUpdate(
-        { sslCommercePayOrderId: tran_id },
-        { paymentStatus: "paid", paymentId: val_id, paidAt: new Date() },
-      );
-    }
-  }
-
-  res.status(200).json(successResponse({ message: "IPN received" }));
-});

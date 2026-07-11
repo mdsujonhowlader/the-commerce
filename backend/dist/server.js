@@ -17,6 +17,7 @@ import { customerBrandRoute } from "./routes/customer/brand.routes.js";
 import { customerAddressRoute } from "./routes/customer/address.routes.js";
 import { adminPromoRoute } from "./routes/admin/promo.routes.js";
 import { customerPromoRoute } from "./routes/customer/promo.routes.js";
+import { customerOrderRoute } from "./routes/customer/order.routes.js";
 async function mainEntryFunction() {
     await connectDB();
     const app = express();
@@ -43,6 +44,7 @@ async function mainEntryFunction() {
     app.use("/customer", customerBrandRoute);
     app.use("/customer", customerAddressRoute);
     app.use("/customer", customerPromoRoute);
+    app.use("/customer", customerOrderRoute);
     //admin
     app.use("/admin", adminCateRoute);
     app.use("/admin", adminBrandRoute);

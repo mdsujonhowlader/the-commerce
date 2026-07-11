@@ -71,9 +71,7 @@ export const updateCustomerAddressById = asyncHandler(async (req, res) => {
     const user = await User.findById(dbUser._id);
     const foundUser = requireFound(user, "User not Found on DB");
     const addresses = (foundUser.addresses || []);
-    const getAddressTheUserWantToUpdate = addresses.find((currentAddress) => {
-        currentAddress._id === addressId;
-    });
+    const getAddressTheUserWantToUpdate = addresses.find((currentAddress) => currentAddress._id === addressId);
     if (!getAddressTheUserWantToUpdate) {
         throw new AppError(404, "Address is not found");
     }
@@ -87,7 +85,7 @@ export const updateCustomerAddressById = asyncHandler(async (req, res) => {
     getAddressTheUserWantToUpdate.address = address;
     getAddressTheUserWantToUpdate.state = state;
     getAddressTheUserWantToUpdate.postalCode = postalCode;
-    foundUser.save();
+    await foundUser.save();
     const items = [...foundUser.addresses]
         .sort((a, b) => Number(b.isDefault) - Number(a.isDefault))
         .map(mappedAddress);

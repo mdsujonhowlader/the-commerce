@@ -105,7 +105,7 @@ export const updateProducts = asyncHandler(async (req, res) => {
         publicId: image.publicId,
         isCover: false,
     }));
-    let existingImages = product.images.map((img) => ({
+    const existingImages = product.images.map((img) => ({
         url: img.url,
         publicId: img.publicId,
         isCover: img.isCover,
