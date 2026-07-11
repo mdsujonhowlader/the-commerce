@@ -8,13 +8,16 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
 import { adminBrandRoute } from "./routes/admin/brand.routes.js";
 import { adminCateRoute } from "./routes/admin/category.routes.js";
+import { adminDashboardRoute } from "./routes/admin/dashboard.routes.js";
 import { adminOrderRoute } from "./routes/admin/order.routes.js";
 import { adminProRoute } from "./routes/admin/product.routes.js";
 import { adminPromoRoute } from "./routes/admin/promo.routes.js";
+import { adminSettingsRoute } from "./routes/admin/settings.routes.js";
 import { authRouter } from "./routes/auth/auth.routes.js";
 import { customerAddressRoute } from "./routes/customer/address.routes.js";
 import { customerBrandRoute } from "./routes/customer/brand.routes.js";
 import { customerCategoryRoute } from "./routes/customer/category.routes.js";
+import { customerHomeRoute } from "./routes/customer/home.routes.js";
 import { customerOrderRoute } from "./routes/customer/order.routes.js";
 import { customerProductRoute } from "./routes/customer/product.routes.js";
 import { customerPromoRoute } from "./routes/customer/promo.routes.js";
@@ -51,6 +54,7 @@ async function mainEntryFunction() {
   app.use("/customer", customerAddressRoute);
   app.use("/customer", customerPromoRoute);
   app.use("/customer", customerOrderRoute);
+  app.use("/customer", customerHomeRoute);
 
   //admin
   app.use("/admin", adminCateRoute);
@@ -58,6 +62,8 @@ async function mainEntryFunction() {
   app.use("/admin", adminProRoute);
   app.use("/admin", adminPromoRoute);
   app.use("/admin", adminOrderRoute);
+  app.use("/admin", adminSettingsRoute);
+  app.use("/admin", adminDashboardRoute);
 
   //not found and global error handle
   app.use(notFound);
