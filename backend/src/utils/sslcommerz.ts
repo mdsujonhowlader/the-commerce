@@ -55,3 +55,13 @@ export async function initPayment(
   const response = (await sslz.init(data)) as SSLResponse;
   return response;
 }
+
+export async function validatePayment(val_id: string) {
+  const response = await sslz.validate({ val_id });
+  return response as Record<string, unknown>;
+}
+
+export async function transactionQueryByTransactionId(tran_id: string) {
+  const response = await sslz.transactionQueryByTransactionId({ tran_id });
+  return response as Record<string, unknown>;
+}

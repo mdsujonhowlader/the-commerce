@@ -9,8 +9,9 @@ import { Product, ProductSize } from "../../models/Product.js";
 import { Promo } from "../../models/Promo.js";
 import { AppError } from "../../utils/AppError.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { successResponse } from "../../utils/envelope.js";
 import { requireFound, requireText } from "../../utils/helper.js";
-import { initPayment } from "../../utils/sslcommerz.js";
+import { initPayment, validatePayment } from "../../utils/sslcommerz.js";
 
 type UserAddress = {
   _id: Types.ObjectId;
@@ -53,6 +54,9 @@ type PromoRow = {
   endsAt: Date;
 };
 
+const FRONTEND_URL =
+  process.env.CORS_ORIGINS?.split(",")[0]?.trim() || "http://localhost:5173";
+
 export const checkoutSession = asyncHandler(
   async (req: Request, res: Response) => {
     const dbUser = await getDbUserFromReq(req);
@@ -76,7 +80,7 @@ export const checkoutSession = asyncHandler(
     if (!foundCart.items.length) {
       throw new AppError(400, "Cart is empty");
     }
-    const selectAddress: UserAddress = foundUser.addresses.find(
+    const selectAddress = foundUser.addresses.find(
       (item) => String(item._id) === addressId,
     );
     if (!selectAddress) {
@@ -202,12 +206,35 @@ export const checkoutSession = asyncHandler(
 
     const sslResponse = await initPayment(paymentData);
 
-    res.status(200).json({
-      success: true,
-      message: "Checkout session created",
-      data: {
+    res.status(200).json(
+      successResponse({
         GatewayPageURL: sslResponse.GatewayPageURL,
-      },
-    });
+      }),
+    );
+  },
+);
+
+export const orderSuccess = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { val_id, tran_id } = req.body();
+    if (val_id) {
+      const validation = await validatePayment(val_id);
+      if (
+        validation?.status === "VALID" ||
+        validation.status === "VALIDATION"
+      ) {
+        await Order.findOneAndUpdate(
+          {
+            sslCommercePayOrderId: tran_id,
+          },
+          {
+            paymentStatus: "paid",
+            paymentId: val_id,
+            paidAt: new Date(),
+          },
+        );
+      }
+    }
+    res.redirect(`${FRONTEND_URL}/order/success?tran_id=${tran_id || ""}`);
   },
 );
