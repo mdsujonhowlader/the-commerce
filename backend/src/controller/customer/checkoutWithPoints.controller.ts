@@ -54,6 +54,22 @@ type PromoRow = {
   endsAt: Date;
 };
 
+export const checkoutPoints = asyncHandler(
+  async (req: Request, res: Response) => {
+    const dbUser = await getDbUserFromReq(req);
+    const user = await User.findById(dbUser._id)
+      .select("points")
+      .lean<{ points: number }>();
+
+    const foundUser = requireFound(user, "user not found", 404);
+    res.json(
+      successResponse({
+        points: foundUser?.points || 0,
+      }),
+    );
+  },
+);
+
 export const checkoutSessionForPoints = asyncHandler(
   async (req: Request, res: Response) => {
     const dbUser = await getDbUserFromReq(req);
