@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import type { Promo, PromoFormValues } from "@/features/admin/promos/types";
 import { useEffect, useState } from "react";
 
-import { toDateTimeLocal } from "../../../../../backend/src/utils/DateTimeHelper";
+import { toDateTimeLocal } from "../../../utils/DateTimeHelper";
 
 type AdminPromoDialogsProps = {
   open: boolean;
