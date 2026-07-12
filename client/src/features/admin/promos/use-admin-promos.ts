@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   createAdminPromos,
   deleteAdminPromos,
@@ -60,6 +61,7 @@ export function useAdminPromos() {
 
       setPromos((response ?? { items: [] }).items);
       closePromoDialog();
+      toast("Promos Updated Successfully");
     } catch (error) {
       console.error(error);
     } finally {
@@ -75,8 +77,8 @@ export function useAdminPromos() {
     try {
       setDeletingPromoId(promoId);
       const response = await deleteAdminPromos(promoId);
-
       setPromos((response ?? { items: [] }).items);
+      toast("Promos Deleted Successfully");
     } catch (error) {
       console.error(error);
     } finally {

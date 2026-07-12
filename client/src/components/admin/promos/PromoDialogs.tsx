@@ -55,6 +55,7 @@ const AdminPromoDialogs = ({
       });
       return;
     }
+    setForm(defaultFormValues);
   }, [open, promo]);
 
   function updateFields<K extends keyof PromoFormValues>(
@@ -95,8 +96,10 @@ const AdminPromoDialogs = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-2/3 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Manage Promos</DialogTitle>
-          <DialogDescription>Add or remove Promos</DialogDescription>
+          <DialogTitle>
+            {isEditedMode ? "Updating Promos" : "New Product Creating"}
+          </DialogTitle>
+          <DialogDescription>Add or Update Promos</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

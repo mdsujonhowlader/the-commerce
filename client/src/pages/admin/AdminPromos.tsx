@@ -34,7 +34,13 @@ export default function AdminPromos() {
       />
       <Card>
         <CardContent className="p-0">
-          <AdminPromoTable />
+          <AdminPromoTable
+            promos={promos}
+            onEdit={onEditDialogOpen}
+            onDelete={removePromo}
+            deletingPromoId={deletingPromoId}
+            loading={loading}
+          />
         </CardContent>
       </Card>
 
