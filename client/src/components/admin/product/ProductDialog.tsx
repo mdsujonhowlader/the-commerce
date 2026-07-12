@@ -17,9 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import ColorPicker from "./ColorPicker";
-import SizeSelector from "./SizeSelector";
-import ImagePicker from "./ImagePicker";
 import type {
   Brand,
   Category,
@@ -27,6 +24,9 @@ import type {
   ProductStatus,
 } from "@/features/admin/products/types";
 import { useProductsAddForm } from "@/features/admin/products/use-product-add-form";
+import ColorPicker from "./ColorPicker";
+import ImagePicker from "./ImagePicker";
+import SizeSelector from "./SizeSelector";
 
 type ProductDialogProps = {
   open: boolean;

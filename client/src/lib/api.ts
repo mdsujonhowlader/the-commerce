@@ -3,7 +3,6 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { env } from "./env";
 import type { ApiEnvelope } from "./types";
 
-
 let tokenGetter: (() => Promise<string | null>) | null = null;
 
 export function setApiTokenGetter(getter: () => Promise<string | null>) {
@@ -18,7 +17,7 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   if (!tokenGetter) return config;
   const token = await tokenGetter();
- 
+
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
@@ -86,13 +85,31 @@ export async function apiPut<TResponse, TBody = unknown>(
   }
 }
 
-export async function apiDelete<TResponse,TBody=unknown>(
+export async function apiPatch<TResponse, TBody = unknown>(
   url: string,
-  body?:TBody,
+  body?: TBody,
   config?: AxiosRequestConfig,
 ) {
   try {
-    const response = await api.delete<ApiEnvelope<TResponse>>(url, {...config ,data: body });
+    const response = await api.patch<ApiEnvelope<TResponse>>(url, body, config);
+    if (response.data.status === "error" || !response.data.data) {
+      throw new Error(response.data.errors?.[0]?.message || "Request Failed");
+    }
+    return response.data.data;
+  } catch (error) {
+    throw new Error(getErrorMsg(error));
+  }
+}
+export async function apiDelete<TResponse, TBody = unknown>(
+  url: string,
+  body?: TBody,
+  config?: AxiosRequestConfig,
+) {
+  try {
+    const response = await api.delete<ApiEnvelope<TResponse>>(url, {
+      ...config,
+      data: body,
+    });
     if (response.data.status === "error" || !response.data.data) {
       throw new Error(response.data.errors?.[0]?.message || "Request Failed");
     }

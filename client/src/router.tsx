@@ -1,19 +1,19 @@
 import { createBrowserRouter } from "react-router";
-import CustomerLayout from "./components/layout/CustomerLayout";
-import StoreHomePage from "./pages/customer/StoreHomePage";
+import { ProtectedLayout } from "./components/auth/ProtectedLayout";
 import { PublicLayout } from "./components/auth/PublicLayout";
+import CustomerLayout from "./components/layout/CustomerLayout";
 import SignInPage from "./pages/auth/SignInPage";
 import SignUpPage from "./pages/auth/SignUpPage";
-import { ProtectedLayout } from "./components/auth/ProtectedLayout";
+import StoreHomePage from "./pages/customer/StoreHomePage";
 
 import { RoleGaurdLayout } from "./components/auth/RoleGauredLayout";
 import AdminLayout from "./components/layout/AdminLayout";
-import CustomrProfilePage from "./pages/customer/ProfilePage";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminCoupons from "./pages/admin/AdminCoupons";
-import AdminSettings from "./pages/admin/AdminSettings";
 import AdminDashboardPage from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminPromos from "./pages/admin/AdminPromos";
+import AdminSettings from "./pages/admin/AdminSettings";
+import CustomrProfilePage from "./pages/customer/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
             },
             {
               path:"coupons",
-              element:<AdminCoupons/>
+              element:<AdminPromos/>
             },
             {
               path:"settings",

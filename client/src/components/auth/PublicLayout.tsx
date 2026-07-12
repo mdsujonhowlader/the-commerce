@@ -2,6 +2,7 @@ import { userAuthStore } from "@/features/auth/store";
 import { useAuth } from "@clerk/react";
 
 import { Navigate, Outlet } from "react-router";
+import CommonLoader from "../common/Loader";
 
 export function PublicLayout() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -9,7 +10,7 @@ export function PublicLayout() {
 
   if (!isLoaded) return null;
   if (isSignedIn && (!isBootstraped || status === "loading")) {
-    return null;
+    return <CommonLoader />;
   }
   if (isSignedIn) {
     return <Navigate to={"profile"} replace />;

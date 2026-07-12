@@ -1,8 +1,8 @@
+import { setApiTokenGetter } from "@/lib/api";
 import { useAuth } from "@clerk/react";
-import { userAuthStore } from "./store";
 import { useEffect } from "react";
 import { meUser, syncUser } from "./api";
-import { setApiTokenGetter } from "@/lib/api";
+import { userAuthStore } from "./store";
 
 export function useBootstapAuth() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
@@ -11,8 +11,7 @@ export function useBootstapAuth() {
   useEffect(() => {
     setApiTokenGetter(async () => {
       const token = await getToken();
-      console.log(token);
-      
+
       return token ?? null;
     });
   }, [getToken]);
