@@ -1,14 +1,17 @@
-import { getDbUserFromReq } from "../../middleware/auth.js";
 import { Order } from "../../models/Order.js";
 import { Product } from "../../models/Product.js";
-import { User } from "../../models/User.js";
 import { AppError } from "../../utils/AppError.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { successResponse } from "../../utils/envelope.js";
 import { requireFound, requireText } from "../../utils/helper.js";
-export const getCustomerOrder = asyncHandler(async (req, res) => {
-    const dbUser = await getDbUserFromReq(req);
-    const orders = await Order.find({ user: dbUser._id })
+const ALLOWED_ORDER_STATUSES = [
+    "placed",
+    "shipped",
+    "delivered",
+    "returned",
+];
+export const getAdminOrder = asyncHandler(async (req, res) => {
+    const orders = await Order.find()
         .select("totalItems totalAmmount paymentStatus orderStatus paidAt deliveryAt returnAt createdAt")
         .sort({ createdAt: -1 })
         .lean();
@@ -16,6 +19,8 @@ export const getCustomerOrder = asyncHandler(async (req, res) => {
         items: orders.map((orderItem) => ({
             _id: String(orderItem._id),
             code: String(orderItem._id).slice(-8).toUpperCase(),
+            customerName: orderItem.customerName,
+            customerEmail: orderItem.customerEmail,
             totalItems: orderItem.totalItems,
             totalAmmount: orderItem.totalAmmount,
             paymentStatus: orderItem.paymentStatus,
@@ -27,36 +32,34 @@ export const getCustomerOrder = asyncHandler(async (req, res) => {
         })),
     }));
 });
-export const patchCustomerOrderReturn = asyncHandler(async (req, res) => {
-    const dbUser = await getDbUserFromReq(req);
+export const patchAdminOrderStatus = asyncHandler(async (req, res) => {
     const orderId = String(req.params.orderId || "").trim();
+    const orderStatus = String(req.body.orderStatus || "").trim();
     requireText(orderId, "Order id is required");
-    const order = await Order.findOne({ _id: orderId, user: dbUser._id });
-    const foundOrder = requireFound(order, "Order is not found", 404);
-    if (foundOrder.orderStatus !== "delivered" || !foundOrder.deliveryAt) {
-        throw new AppError(400, "Only delivered orders can be returned");
+    requireText(orderStatus, "order status is required");
+    if (!ALLOWED_ORDER_STATUSES.includes(orderStatus)) {
+        throw new AppError(400, "Invalid order status");
     }
-    const sevenDaysRequiredToReturned = 7 * 24 * 60 * 60 * 1000;
-    if (Date.now() - new Date(foundOrder.deliveryAt).getTime() >
-        sevenDaysRequiredToReturned) {
-        throw new AppError(400, "Return window expired");
+    const order = await Order.findById(orderId);
+    const foundOrder = requireFound(order, "Order not found", 404);
+    if (orderStatus === "returned" && foundOrder.orderStatus !== "returned") {
+        for (const item of foundOrder.items) {
+            await Product.updateOne({
+                _id: item.products,
+            }, {
+                $stock: { stock: item.quantity },
+            });
+        }
     }
-    for (const item of foundOrder.items) {
-        await Product.updateOne({
-            _id: item.products,
-        }, {
-            $inc: { stock: item.quantity },
-        });
+    if (orderStatus === "delivered" && !foundOrder.deliveryAt) {
+        foundOrder.deliveryAt = new Date();
     }
-    await User.updateOne({ _id: dbUser._id }, {
-        $inc: { points: foundOrder.totalAmmount },
-    });
-    foundOrder.orderStatus = "returned";
-    foundOrder.returnAt = new Date();
+    foundOrder.orderStatus = orderStatus;
     await foundOrder.save();
     res.json(successResponse({
         _id: String(foundOrder._id),
         orderStatus: foundOrder.orderStatus,
+        deliveryAt: foundOrder.deliveryAt,
         returnAt: foundOrder.returnAt,
     }));
 });

@@ -4,6 +4,7 @@ import { Cart } from "../../models/Cart.js";
 import { Order } from "../../models/Order.js";
 import { Product } from "../../models/Product.js";
 import { Promo } from "../../models/Promo.js";
+import { User } from "../../models/User.js";
 import { AppError } from "../../utils/AppError.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { successResponse } from "../../utils/envelope.js";
@@ -98,6 +99,8 @@ export const checkoutSession = asyncHandler(async (req, res) => {
         orderStatus: "placed",
         totalAmmount: totalAmount,
         sslCommercePayOrderId: tran_id,
+        paymentId: tran_id,
+        paidAt: new Date(),
     });
     const paymentData = {
         total_amount: totalAmount,
