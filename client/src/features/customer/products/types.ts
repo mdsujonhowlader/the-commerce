@@ -38,9 +38,9 @@ export type CustomerProduct = {
 
 export type GetCustomerProductsParams = {
     category?: string;
-    brandName?: string;
+    brand?: string;
     color?: string;
-    sizes?: string;
+    size?: string;
     sort?: ProductSort;
 }
 export type GetCustomerProductsDetailsResponse = {

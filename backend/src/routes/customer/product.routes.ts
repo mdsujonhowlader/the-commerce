@@ -7,4 +7,4 @@ import {
 export const customerProductRoute = Router();
 
 customerProductRoute.get("/products", getProducts);
-customerProductRoute.get("/productc/:id", getProductById);
+customerProductRoute.get("/product/:id", getProductById);
