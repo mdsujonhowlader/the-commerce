@@ -30,4 +30,4 @@ adminProRoute.put(
   requiredAdmin,
   updateProducts,
 );
-// adminProRoute.delete('/product/:id',requiredAdmin,createCategory)
+// adminProRoute.delete('/products/:id',requiredAdmin,createCategory)

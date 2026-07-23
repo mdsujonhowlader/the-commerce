@@ -67,8 +67,8 @@ export function useProductsAddForm({
   const [saving, setSaving] = useState(false);
 
   // useEffect(() => {
-  //   setForms(open && product ? mapProductToFormValues(product) : getEmptyForms());
-  // }, [open, product]);
+  //   setForms(open && products ? mapProductToFormValues(products) : getEmptyForms());
+  // }, [open, products]);
 
 
   if (product !== prevProduct || open !== prevOpen) {

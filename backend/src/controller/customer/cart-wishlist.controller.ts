@@ -56,7 +56,7 @@ function formatProduct(product: ProductPreview) {
 
 async function getCartResponse(userId: string) {
   const cart = await Cart.findOne({ user: userId }).populate(
-    "items.product",
+    "items.products",
     "title brand price salePercentage images",
   );
   const cartItems = (cart?.items || []) as unknown as CartItemPreview[];
@@ -175,7 +175,7 @@ export const addToCartItem = asyncHandler(
     if (quantity > foundProduct.stock) {
       throw new AppError(
         400,
-        "Quantity is more than the stock of this product",
+        "Quantity is more than the stock of this products",
       );
     }
     let cart = await Cart.findOne({ user: dbUser._id });
@@ -245,7 +245,7 @@ export const increaseCartItem = asyncHandler(
     if (foundCart.items[itemIndex].quantity + 1 > foundProduct.stock) {
       throw new AppError(
         400,
-        "Quantity is more than the stock of this product",
+        "Quantity is more than the stock of this products",
       );
     }
 
@@ -420,7 +420,7 @@ export const addWishListItem = asyncHandler(
 
     requireText(productId, "Product id is required");
 
-    //find product
+    //find products
     const product = await Product.findOne({
       _id: productId,
       status: "active",

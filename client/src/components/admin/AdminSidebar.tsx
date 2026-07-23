@@ -12,7 +12,7 @@ import { cn } from "../../lib/utils";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/product", icon: ShoppingBag },
+  { label: "Products", href: "/admin/products", icon: ShoppingBag },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { label: "Coupons", href: "/admin/coupons", icon: Tag },
   { label: "Settings", href: "/admin/settings", icon: Settings },

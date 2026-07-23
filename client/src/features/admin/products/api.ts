@@ -49,7 +49,7 @@ export async function deleteBrand(brandId: string) {
   return apiDelete<DeleteResponse>(`/admin/brand/${brandId}`);
 }
 
-//product
+//products
 export async function getAdminProducts(search?: string) {
   const query = search?.trim()
     ? `/admin/products?search=${encodeURIComponent(search.trim())}`
